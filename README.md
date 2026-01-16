@@ -1,6 +1,5 @@
 # weather_application
-
-A new Flutter project.
+This is my First Flutter Project
 
 ## Getting Started
 
