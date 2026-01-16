@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:weather_application/Service/weather_service.dart';
+import 'package:weather_application/Widgets/Weather_view.dart';
 import 'package:weather_application/models/Weather_model.dart';
 
 class WeatherPage extends StatefulWidget {
@@ -17,7 +19,7 @@ class _WeatherPageState extends State<WeatherPage> {
   Weather? _weather;
 
   //fetch weather
-  _fetchWeather() async {
+  Future<void> _fetchWeather() async {
     //get the current city
     String cityName = await _weatherServive.getCurrentCity();
 
@@ -34,6 +36,41 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   // weather animations
+  String getWeatherAnimation(String? description, String? icon) {
+    final isNight = icon != null && icon.endsWith('n');
+
+    if (description == null) {
+      return isNight ? "assets/night.json" : "assets/sunny.json";
+    }
+
+    switch (description.toLowerCase()) {
+      case 'clear sky':
+        return isNight ? "assets/night.json" : "assets/sunny.json";
+
+      case 'few clouds':
+      case 'scattered clouds':
+      case 'broken clouds':
+        return "assets/cloudy.json";
+
+      case 'rain':
+      case 'shower rain':
+        return "assets/rainy.json";
+
+      case 'thunderstorm':
+        return "assets/thunder.json";
+
+      case 'snow':
+        return "assets/snow.json";
+
+      case 'mist':
+      case 'dust':
+      case 'haze':
+        return "assets/cloud.json";
+
+      default:
+        return isNight ? "assets/night.json" : "assets/sunny.json";
+    }
+  }
 
   // initial state
   void initState() {
@@ -43,19 +80,9 @@ class _WeatherPageState extends State<WeatherPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            //city name
-            Text(_weather?.cityName ?? "Loading..."),
-
-            //temp
-            Text("${_weather?.temperature.round()} °C"),
-          ],
-        ),
-      ),
+    return WeatherView(
+      weather: _weather,
+      getWeatherAnimation: getWeatherAnimation,
     );
   }
 }
